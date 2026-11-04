@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAMSAT A–Z Prep Suite</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">G</div>
+      <div>
+        <div class="brand-title">GAMSAT A–Z Prep Suite</div>
+        <div class="brand-sub" id="sync-status">Saved locally & synced</div>
+      </div>
+    </div>
+
+    <nav class="nav-tabs" aria-label="Main Navigation">
+      <button class="nav-btn active" data-tab="dashboard">1. Dashboard & Roadmap</button>
+      <button class="nav-btn" data-tab="syllabus">2. Syllabus & Cheat Sheets</button>
+      <button class="nav-btn" data-tab="simulator">3. S1 & S3 Simulator</button>
+      <button class="nav-btn" data-tab="essay">4. S2 Essay Studio</button>
+      <button class="nav-btn" data-tab="errors">5. Error Log & Analytics</button>
+      <button class="nav-btn" data-tab="pdf">6. PDF Runner & Importer</button>
+    </nav>
+
+    <div class="topbar-actions">
+      <button class="btn btn-sm" id="theme-toggle-btn" title="Toggle Dark/Light Mode">☀️ / 🌙</button>
+      <button class="btn btn-sm" id="export-btn" title="Download backup JSON">Backup</button>
+      <label class="btn btn-sm" style="cursor:pointer;" title="Restore backup JSON">
+        Restore <input type="file" id="import-file-input" accept=".json" style="display:none;" />
+      </label>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- TAB 1: DASHBOARD & 12-WEEK ROADMAP -->
+    <section id="view-dashboard" class="view-section active">
+      <div class="card" style="margin-bottom: 1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <h2 style="font-size:1.35rem; margin-bottom:0.2rem;">Welcome back, <span id="student-name-display">Doctor-in-Training</span></h2>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Structured A-to-Z preparation across Section I (Humanities), Section II (Written Communication), and Section III (Sciences).</p>
+        </div>
+        <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block;">Name</label>
+            <input type="text" id="setting-name" style="width:150px;" placeholder="Her Name" />
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block;">Target Sitting Date</label>
+            <input type="date" id="setting-exam-date" style="width:155px;" />
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block;">Target GAMSAT Score</label>
+            <input type="number" id="setting-target-score" style="width:95px;" min="50" max="100" value="72" />
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="card stat-card">
+          <div class="stat-label">Countdown to Sitting</div>
+          <div class="stat-value" id="stat-countdown">-- days</div>
+          <div class="stat-meta" id="stat-target-display">Target Score: 72+</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">A–Z Syllabus & Roadmap</div>
+          <div class="stat-value" id="stat-syllabus-pct">0%</div>
+          <div class="progress-track"><div class="progress-fill" id="bar-syllabus" style="width:0%"></div></div>
+          <div class="stat-meta" id="stat-syllabus-detail">0 / 0 checkpoints mastered</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">S1 & S3 Question Accuracy</div>
+          <div class="stat-value" id="stat-q-acc">--%</div>
+          <div class="progress-track"><div class="progress-fill" id="bar-q-acc" style="width:0%"></div></div>
+          <div class="stat-meta" id="stat-q-detail">0 questions attempted</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">S2 Essays & Error Bank</div>
+          <div class="stat-value" id="stat-essays-count">0 Essays</div>
+          <div class="stat-meta" id="stat-errors-detail">0 active items in Error Log</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.85rem;">
+            <h3>12-Week A–Z Study Roadmap</h3>
+            <span class="badge badge-s3" id="roadmap-progress-badge">0% Done</span>
+          </div>
+          <div id="roadmap-container"></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom:0.85rem;">Daily High-Impact Study Actions</h3>
+          <div style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.25rem;">
+            <div class="card" style="background:var(--bg-elevated); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-weight:700;">Drill S1 & S3 Reasoning Passages</div>
+                <div style="font-size:0.82rem; color:var(--text-muted);">Split-screen ACER simulator with worked solutions & option elimination</div>
+              </div>
+              <button class="btn btn-primary" onclick="switchTab('simulator')">Start Drill →</button>
+            </div>
+            <div class="card" style="background:var(--bg-elevated); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-weight:700;">Write or Plan a Section II Essay</div>
+                <div style="font-size:0.82rem; color:var(--text-muted);">Task A & Task B quote sets, 30/65-min timer & self-grading rubric</div>
+              </div>
+              <button class="btn btn-primary" onclick="switchTab('essay')">Open Studio →</button>
+            </div>
+            <div class="card" style="background:var(--bg-elevated); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-weight:700;">Run an Official ACER / Des O'Neill PDF</div>
+                <div style="font-size:0.82rem; color:var(--text-muted);">Open any PDF booklet side-by-side with a timed digital answer sheet</div>
+              </div>
+              <button class="btn btn-primary" onclick="switchTab('pdf')">Open PDF Runner →</button>
+            </div>
+            <div class="card" style="background:var(--bg-elevated); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-weight:700;">Review Your Error Log</div>
+                <div style="font-size:0.82rem; color:var(--text-muted);">Fix recurring reasoning traps (graphs, log math, ACER distractors)</div>
+              </div>
+              <button class="btn" onclick="switchTab('errors')">Review Errors →</button>
+            </div>
+          </div>
+
+          <h4 style="margin-bottom:0.5rem;">Quick Scratchpad / Study Notes</h4>
+          <textarea id="dashboard-notes" rows="5" placeholder="Jot down today's focus, weak topics to revisit, or sitting reminders..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: SYLLABUS & HIGH-YIELD CHEAT SHEETS -->
+    <section id="view-syllabus" class="view-section">
+      <div class="sim-toolbar">
+        <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="subtab-syllabus-btn" onclick="toggleSyllabusSubtab('checklist')">A–Z Topic Checklist</button>
+          <button class="btn" id="subtab-cheatsheets-btn" onclick="toggleSyllabusSubtab('cheatsheets')">High-Yield Cheat Sheets & Mental Math</button>
+        </div>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <select id="syllabus-filter" style="width:210px;">
+            <option value="ALL">All Sections (A–Z)</option>
+            <option value="S3-Math">No-Calculator Math & Graphs</option>
+            <option value="S1">Section I: Humanities</option>
+            <option value="S2">Section II: Essays</option>
+            <option value="S3-Bio">Section III: Biology (40%)</option>
+            <option value="S3-Chem">Section III: Chemistry (40%)</option>
+            <option value="S3-Phys">Section III: Physics (20%)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="syllabus-checklist-view" class="grid-2"></div>
+      <div id="syllabus-cheatsheets-view" class="grid-2" style="display:none;"></div>
+    </section>
+
+    <!-- TAB 3: S1 & S3 EXAM SIMULATOR -->
+    <section id="view-simulator" class="view-section">
+      <div class="sim-toolbar">
+        <div style="display:flex; gap:0.65rem; align-items:center; flex-wrap:wrap;">
+          <select id="sim-section-filter" style="width:170px;">
+            <option value="ALL">All Passages (S1 & S3)</option>
+            <option value="S1">Section I Only</option>
+            <option value="S3">Section III Only</option>
+          </select>
+          <select id="sim-unit-select" style="width:330px;"></select>
+          <select id="sim-mode-select" style="width:190px;">
+            <option value="tutor">Tutor Mode (Instant Explanations)</option>
+            <option value="exam">Exam Mode (Hide Until Submit)</option>
+          </select>
+        </div>
+
+        <div style="display:flex; gap:0.65rem; align-items:center;">
+          <div class="timer-pill" id="sim-timer-display">00:00</div>
+          <button class="btn btn-sm" id="sim-timer-toggle">▶ Start Timer</button>
+          <button class="btn btn-sm" id="sim-timer-reset">↺ Reset</button>
+          <button class="btn btn-primary btn-sm" id="sim-submit-unit-btn">Grade Unit</button>
+        </div>
+      </div>
+
+      <div class="sim-split">
+        <div class="sim-pane">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <span class="badge badge-s3" id="sim-unit-badge">S3</span>
+            <span style="font-size:0.8rem; color:var(--text-muted);">Tip: Right-click or click 'Strike' on options to cross out distractors</span>
+          </div>
+          <h3 id="sim-unit-title" style="margin-bottom:0.9rem;"></h3>
+          <div id="sim-unit-stimulus" class="stimulus-body"></div>
+        </div>
+
+        <div class="sim-pane" id="sim-questions-container"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: SECTION II ESSAY STUDIO -->
+    <section id="view-essay" class="view-section">
+      <div class="sim-toolbar">
+        <div style="display:flex; gap:0.65rem; align-items:center; flex-wrap:wrap;">
+          <select id="s2-task-filter" style="width:190px;">
+            <option value="ALL">All Prompts (Task A & B)</option>
+            <option value="Task A">Task A (Socio-Political)</option>
+            <option value="Task B">Task B (Personal/Reflective)</option>
+          </select>
+          <select id="s2-prompt-select" style="width:340px;"></select>
+          <button class="btn btn-sm" id="s2-random-btn">🎲 Random Theme</button>
+        </div>
+
+        <div style="display:flex; gap:0.65rem; align-items:center;">
+          <div class="timer-pill" id="s2-timer-display">32:30</div>
+          <button class="btn btn-sm" id="s2-timer-start">▶ Start/Pause</button>
+          <button class="btn btn-sm" onclick="setEssayTimer(32.5)">32.5m (Single)</button>
+          <button class="btn btn-sm" onclick="setEssayTimer(65)">65m (Full S2)</button>
+        </div>
+      </div>
+
+      <div class="sim-split">
+        <!-- Left Pane: Quotes, Hints & Self-Grading Rubric -->
+        <div class="sim-pane">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.65rem;">
+            <span class="badge badge-s2" id="s2-task-badge">Task A</span>
+            <strong id="s2-theme-title">Theme</strong>
+          </div>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem;">
+            Consider the following comments and develop a piece of writing in response to one or more of them. Your writing will be judged on the quality of your thought and on how well you organize and express your ideas.
+          </p>
+          <div id="s2-quotes-list" style="margin-bottom:1rem;"></div>
+
+          <details style="margin-bottom:1rem; background:var(--bg-elevated); padding:0.75rem; border-radius:8px; border:1px solid var(--border);">
+            <summary style="cursor:pointer; font-weight:600; color:var(--primary);">💡 Show Dialectical Structure & Thesis Hints</summary>
+            <ul id="s2-hints-list" style="margin-top:0.6rem; padding-left:1.25rem; font-size:0.88rem; color:var(--text-muted);"></ul>
+          </details>
+
+          <h4 style="margin-bottom:0.5rem;">5-Minute Planning Scratchpad (Thesis / Antithesis / Examples)</h4>
+          <textarea id="s2-plan-input" rows="5" placeholder="1. Core Contention:&#10;2. Para 1 (Thesis + Real-world/Historical lens):&#10;3. Para 2 (Counter-perspective / Limitation):&#10;4. Para 3 (Synthesis / Resolution):" style="margin-bottom:1rem;"></textarea>
+
+          <div class="card" style="background:var(--bg-elevated);">
+            <h4 style="margin-bottom:0.5rem;">ACER Criterion Self-Check before Saving</h4>
+            <label class="check-item"><input type="checkbox" class="s2-rubric-chk" /> <span>Clear, non-cliché central contention stated in Intro</span></label>
+            <label class="check-item"><input type="checkbox" class="s2-rubric-chk" /> <span>Addresses underlying philosophical tension (not just surface topic)</span></label>
+            <label class="check-item"><input type="checkbox" class="s2-rubric-chk" /> <span>Includes concrete evidence (historical, sociological, or authentic reflection)</span></label>
+            <label class="check-item"><input type="checkbox" class="s2-rubric-chk" /> <span>Explores a counter-argument or nuance rather than one-sided ranting</span></label>
+          </div>
+        </div>
+
+        <!-- Right Pane: Distraction-Free Essay Editor & Saved Portfolio -->
+        <div class="sim-pane">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+            <strong>Essay Response</strong>
+            <div style="font-size:0.84rem; color:var(--text-muted);">
+              <span id="s2-word-count">0 words</span> (Target: 450–650 words)
+            </div>
+          </div>
+          <textarea id="s2-essay-input" class="essay-textarea" placeholder="Begin writing your response here (spellcheck disabled for authentic ACER simulation)..." spellcheck="false"></textarea>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.85rem; gap:0.75rem; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <label style="font-size:0.82rem; color:var(--text-muted);">Self-Score (50–90):</label>
+              <input type="number" id="s2-self-score" min="40" max="95" value="70" style="width:80px;" />
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn" id="s2-clear-btn">Clear Draft</button>
+              <button class="btn btn-success" id="s2-save-btn">💾 Save Essay to Portfolio</button>
+            </div>
+          </div>
+
+          <hr style="border:none; border-top:1px solid var(--border); margin:1.25rem 0;" />
+          <h4 style="margin-bottom:0.75rem;">Saved Essay Portfolio (<span id="s2-archive-count">0</span>)</h4>
+          <div id="s2-archive-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: ERROR LOG & ANALYTICS -->
+    <section id="view-errors" class="view-section">
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-bottom:0.75rem;">Log a Missed or Guessed Question</h3>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:0.9rem;">
+            Every top GAMSAT scorer keeps an Error Log. Record not just <em>what</em> the answer was, but <em>which cognitive habit failed</em> and your rule for next time.
+          </p>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+            <div>
+              <label style="font-size:0.78rem; color:var(--text-muted);">Source / Paper & Q#</label>
+              <input type="text" id="err-source" placeholder="e.g. ACER Test 1 Q34 / Des S3 Q12" />
+            </div>
+            <div>
+              <label style="font-size:0.78rem; color:var(--text-muted);">Section & Subtopic</label>
+              <select id="err-section">
+                <option value="S1: Humanities">S1: Humanities / Poetry / Philosophy</option>
+                <option value="S3: Biology">S3: Biology & Physiology</option>
+                <option value="S3: Chemistry">S3: Chemistry (Buffers/Org/Equil)</option>
+                <option value="S3: Physics">S3: Physics & Math</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-bottom:0.75rem;">
+            <label style="font-size:0.78rem; color:var(--text-muted);">Root Cause of Error</label>
+            <select id="err-cause">
+              <option value="Misread Graph / Axis / Units">Misread Graph / Non-Linear Axis / Units</option>
+              <option value="Misread Question Stem (e.g. missed NOT/EXCEPT)">Misread Question Stem (missed NOT / EXCEPT / qualifier)</option>
+              <option value="Mental Math / Log / Power-of-10 Slip">Mental Math / Logarithm / Power-of-10 Slip</option>
+              <option value="Fell for ACER Distractor (Extreme / Half-True)">Fell for ACER Distractor (Too Extreme / Half-True)</option>
+              <option value="Content / Concept Gap">Content or Foundational Concept Gap</option>
+              <option value="Time Pressure / Rushed Guess">Time Pressure / Bogged Down Earlier</option>
+              <option value="Changed Correct Answer to Wrong">2nd-Guessed & Changed Correct Answer</option>
+            </select>
+          </div>
+          <div style="margin-bottom:0.75rem;">
+            <label style="font-size:0.78rem; color:var(--text-muted);">What went wrong? (Trap / Concept summary)</label>
+            <textarea id="err-what" rows="2" placeholder="e.g. Used Poiseuille r^4 when flow Q was held constant instead of continuity A1v1 = A2v2."></textarea>
+          </div>
+          <div style="margin-bottom:0.85rem;">
+            <label style="font-size:0.78rem; color:var(--text-muted);">Actionable 'Next Time Rule'</label>
+            <input type="text" id="err-rule" placeholder="e.g. Always circle what is held constant before picking a formula!" />
+          </div>
+          <button class="btn btn-primary" id="err-add-btn">+ Add to Error Log</button>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom:0.75rem;">Root-Cause Pattern Breakdown</h3>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:1rem;">Identifies your #1 score leak so you know exactly what to fix before test day.</p>
+          <div id="err-analytics-bars"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+          <h3>Error Bank (<span id="err-total-count">0</span> entries)</h3>
+          <select id="err-status-filter" style="width:200px;">
+            <option value="ALL">All Statuses</option>
+            <option value="Needs Retry">Needs Retry</option>
+            <option value="Mastered">Mastered</option>
+          </select>
+        </div>
+        <div id="err-list-container"></div>
+      </div>
+    </section>
+
+    <!-- TAB 6: PDF COMPANION RUNNER & CUSTOM QUESTION IMPORTER -->
+    <section id="view-pdf" class="view-section">
+      <div class="sim-toolbar">
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <button class="btn btn-primary" id="subtab-pdf-runner-btn" onclick="togglePdfSubtab('runner')">📄 PDF Exam Companion (ACER / Des O'Neill Booklets)</button>
+          <button class="btn" id="subtab-custom-q-btn" onclick="togglePdfSubtab('custom')">➕ Add Custom Passage to Simulator</button>
+        </div>
+      </div>
+
+      <!-- Subview A: Side-by-Side PDF + Interactive Digital Bubble Sheet -->
+      <div id="pdf-runner-view">
+        <div class="sim-toolbar">
+          <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+            <label class="btn btn-primary btn-sm" style="cursor:pointer;">
+              📂 Load PDF Booklet <input type="file" id="pdf-file-input" accept="application/pdf" style="display:none;" />
+            </label>
+            <input type="text" id="pdf-paper-name" placeholder="Paper Name (e.g. ACER Practice Test 1 - S3)" style="width:250px;" />
+            <label style="font-size:0.82rem; color:var(--text-muted);">Questions:</label>
+            <input type="number" id="pdf-q-count" value="75" min="5" max="120" style="width:75px;" />
+            <button class="btn btn-sm" id="pdf-generate-sheet-btn">Build Sheet</button>
+          </div>
+          <div style="display:flex; gap:0.6rem; align-items:center;">
+            <div class="timer-pill" id="pdf-timer-display">150:00</div>
+            <button class="btn btn-sm" id="pdf-timer-toggle">▶ Start/Pause</button>
+            <button class="btn btn-sm" onclick="setPdfTimer(100)">100m (S1)</button>
+            <button class="btn btn-sm" onclick="setPdfTimer(150)">150m (S3)</button>
+          </div>
+        </div>
+
+        <div class="sim-split">
+          <div class="sim-pane" style="padding:0.5rem;">
+            <iframe id="pdf-viewer-frame" class="pdf-frame" title="PDF Booklet Viewer"></iframe>
+            <div id="pdf-empty-hint" style="padding:2rem; text-align:center; color:var(--text-muted);">
+              Click <strong>"📂 Load PDF Booklet"</strong> above to open any ACER or Des O'Neill PDF right here beside your digital answer sheet (nothing leaves your computer).
+            </div>
+          </div>
+
+          <div class="sim-pane">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h4>Digital Bubble Sheet</h4>
+              <span id="pdf-score-summary" class="badge badge-s3">Answered: 0</span>
+            </div>
+
+            <details style="margin-bottom:0.85rem; background:var(--bg-elevated); padding:0.7rem; border-radius:8px; border:1px solid var(--border);">
+              <summary style="cursor:pointer; font-size:0.85rem; font-weight:600;">🔑 Paste Answer Key to Auto-Grade & Auto-Log Errors</summary>
+              <p style="font-size:0.78rem; color:var(--text-muted); margin:0.4rem 0;">
+                Paste letters A/B/C/D in order (spaces, commas, or numbers are ignored—e.g. <code>1.B 2.D 3.A 4.C</code> or <code>BDAC...</code>):
+              </p>
+              <textarea id="pdf-answer-key-input" rows="3" placeholder="e.g. B D A C A B C D..."></textarea>
+              <div style="margin-top:0.5rem; display:flex; gap:0.5rem;">
+                <button class="btn btn-success btn-sm" id="pdf-grade-btn">✓ Grade Sheet Now</button>
+                <button class="btn btn-sm" id="pdf-log-wrong-btn">→ Send All Wrong Qs to Error Log</button>
+              </div>
+            </details>
+
+            <div id="pdf-bubbles-container" style="max-height:55vh; overflow-y:auto;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subview B: Custom Question Unit Creator -->
+      <div id="pdf-custom-view" style="display:none;">
+        <div class="card" style="max-width:850px; margin:0 auto;">
+          <h3 style="margin-bottom:0.5rem;">Add Custom Passage & Question Unit to Simulator</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+            Paste a passage and questions from any study book or notes to practice them inside the interactive S1/S3 Simulator.
+          </p>
+          <div style="display:grid; grid-template-columns: 1fr 2fr; gap:0.75rem; margin-bottom:0.75rem;">
+            <div>
+              <label style="font-size:0.78rem; color:var(--text-muted);">Section</label>
+              <select id="custom-unit-section">
+                <option value="S1">Section I (Humanities)</option>
+                <option value="S3">Section III (Sciences)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.78rem; color:var(--text-muted);">Unit Title & Topic</label>
+              <input type="text" id="custom-unit-title" placeholder="e.g. ACER Sample Q12-14: Bohr Effect & Haemoglobin" />
+            </div>
+          </div>
+          <div style="margin-bottom:0.75rem;">
+            <label style="font-size:0.78rem; color:var(--text-muted);">Stimulus Passage (HTML or plain text)</label>
+            <textarea id="custom-unit-stimulus" rows="5" placeholder="Paste the reading passage, experiment description, or data table here..."></textarea>
+          </div>
+          <div style="margin-bottom:0.75rem;">
+            <label style="font-size:0.78rem; color:var(--text-muted);">Question Stem</label>
+            <input type="text" id="custom-q-stem" placeholder="Enter the question stem..." />
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.6rem; margin-bottom:0.75rem;">
+            <input type="text" id="custom-opt-a" placeholder="Option A" />
+            <input type="text" id="custom-opt-b" placeholder="Option B" />
+            <input type="text" id="custom-opt-c" placeholder="Option C" />
+            <input type="text" id="custom-opt-d" placeholder="Option D" />
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 3fr; gap:0.6rem; margin-bottom:0.9rem;">
+            <div>
+              <label style="font-size:0.78rem; color:var(--text-muted);">Correct Option</label>
+              <select id="custom-q-correct">
+                <option value="0">A</option>
+                <option value="1">B</option>
+                <option value="2">C</option>
+                <option value="3">D</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.78rem; color:var(--text-muted);">Worked Solution / Explanation</label>
+              <input type="text" id="custom-q-exp" placeholder="Why is this option right and the others wrong?" />
+            </div>
+          </div>
+          <button class="btn btn-success" id="custom-unit-save-btn">+ Save Unit to Simulator Bank</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="data-content.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
